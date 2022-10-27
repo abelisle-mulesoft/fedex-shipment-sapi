@@ -21,7 +21,7 @@ We implemented this system API using the following technology stack:
 Although not formally tested, you could easily use older or newer versions of the MuleSoft Anypoint Studio, Mule Server, or both.
 
 ## Implementation Overview
-As of this writing, the FedEx Shipment System API implements a single operation for creating a return shipment label. We stripped down the request body of the POST method to include only the strict minimum required properties. Furthermore, in the current revision, we send the request body you submit to the FedEx Shipment System API as-is to the FedEx Ship API.
+As of this writing, the FedEx Shipment System API implements a single operation for creating a return shipment label. We stripped down the request body of the POST method to include only the strict minimum required properties (see [Sample Request Message](#sample-request-message) below). Furthermore, in the current revision, we send the request body you submit to the FedEx Shipment System API as-is to the FedEx Ship API.
 
 As it is common practice at MuleSoft, we leverage RAML to specify our API. Primarily for convenience and to make sharing the Anypoint Studio project easier, we included the RAML file in the project (`src/main/resources/api`) rather than having a dependency to its published specification in Anypoint Exchange.
 
@@ -39,7 +39,7 @@ As it is common practice at MuleSoft, we leverage RAML to specify our API. Prima
 
 ## Sample Request Message
 We successfully used the following sample request message for testing the FedEx Shipment System API.
-> :warning: **Before using this sample message,** you must update the account number in two accountNumber properties.
+> :warning: **Before using this sample message,** you must update the two accountNumber properties currently set to `"#########"` with your test account number.
 ```json
 {
     "mergeLabelDocOption": "LABELS_AND_DOCS",
