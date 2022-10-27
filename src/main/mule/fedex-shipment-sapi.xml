@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <apikit:config name="fedex-shipment-sapi-config" api="fedex-shipment-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <http:listener-config name="fedex-shipment-sapi-httpListenerConfig">
+        <http:listener-connection host="${http_listener.http.host}" port="${http_listener.http.port}" readTimeout="${http_listener.read_timeout}" />
+    </http:listener-config>
+    <http:request-config name="FedEx_HTTP_Request_Configuration" doc:name="HTTP Request configuration" doc:id="62472dd7-53f1-4f7b-97ea-0d3352ed33e6" responseTimeout="${fedex.response_timeout}">
+        <http:request-connection protocol="HTTPS" host="${fedex.https.host}" port="${fedex.https.port}" />
+    </http:request-config>
+    <configuration-properties doc:name="Configuration properties" doc:id="4cea71b7-a9f9-435b-b3cd-827fc8f51369" file="properties/configuration.yaml" />
+    <flow name="fedex-shipment-sapi-main">
+        <http:listener config-ref="fedex-shipment-sapi-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="fedex-shipment-sapi-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="fedex-shipment-sapi-console">
+        <http:listener config-ref="fedex-shipment-sapi-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="fedex-shipment-sapi-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="post:\shipment:application\json:fedex-shipment-sapi-config">
+        <set-variable value="#[payload]" doc:name="Save Input Payload" doc:id="d20be2fd-7acd-404e-add0-721a3cc24c71" variableName="inputPayload" />
+        <ee:transform doc:name="Create Authorization Request" doc:id="cc7d0d09-50d8-4c2c-828c-bd65a271df4a">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/x-www-form-urlencoded
+---
+{
+	grant_type: p('fedex.authorization.grant_type'),
+	client_id: p('fedex.authorization.client_id'),
+	client_secret: p('fedex.authorization.client_secret')
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <http:request method="POST" doc:name="Create FedEx Access Token" doc:id="97cd943c-5270-4ee6-86dd-975ef78c7685" outputMimeType="application/json" config-ref="FedEx_HTTP_Request_Configuration" path="${fedex.api_authorization.path}"/>
+        <set-variable value="#[payload.access_token]" doc:name="Extract Access Token" doc:id="a4acefd5-aaf8-416f-be80-e35b4166962b" variableName="oauthToken" />
+        <set-payload value="#[vars.inputPayload]" doc:name="Restore Input Payload" doc:id="24099180-e2bd-4c33-bee1-5b33b88f243f" />
+        <http:request method="POST" doc:name="Create FedEx Shipment" doc:id="21bf03d3-99eb-409e-bb85-5a3604527b7f" path="${fedex.ship_api.path}" config-ref="FedEx_HTTP_Request_Configuration" outputMimeType="application/json">
+            <http:headers><![CDATA[#[output application/java
+---
+{
+	"authorization" : "Bearer " ++ vars.oauthToken
+}]]]></http:headers>
+        </http:request>
+        <logger level="INFO" doc:name="Log payload" doc:id="2f143dd2-4f55-4dc8-a7ef-9d7ff49c2f07" message="#[payload]" />
+    </flow>
+</mule>

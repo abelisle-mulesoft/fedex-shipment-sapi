@@ -1,0 +1,73 @@
+{
+    "mergeLabelDocOption": "LABELS_AND_DOCS",
+    "requestedShipment": {
+        "shipper": {
+            "address": {
+                "streetLines": [
+                    "10 FedEx Parkway",
+                    "Suite 302"
+                ],
+                "city": "Beverly Hills",
+                "stateOrProvinceCode": "CA",
+                "postalCode": "90210",
+                "countryCode": "US"
+            },
+            "contact": {
+                "personName": "John Taylor",
+                "phoneNumber": "2065551212"
+            }
+        },
+        "recipients": [
+            {
+                "address": {
+                    "streetLines": [
+                        "10 FedEx Parkway",
+                        "Suite 302"
+                    ],
+                    "city": "Beverly Hills",
+                    "stateOrProvinceCode": "CA",
+                    "postalCode": "90210",
+                    "countryCode": "US"
+                },
+                "contact": {
+                    "personName": "John Taylor",
+                    "phoneNumber": "3125551212"
+                }
+            }
+        ],
+        "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
+        "serviceType": "PRIORITY_OVERNIGHT",
+        "packagingType": "FEDEX_BOX",
+        "shippingChargesPayment": {
+            "paymentType": "SENDER",
+            "payor": {
+                "responsibleParty": {
+                    "accountNumber": {"value": "740561073"}
+                }
+            }
+        },
+        "shipmentSpecialServices": {
+            "specialServiceTypes": ["RETURN_SHIPMENT"],
+            "returnShipmentDetail": {
+              "returnEmailDetail": {
+                "merchantPhoneNumber": "9015551212"
+              },
+              "returnType": "PRINT_RETURN_LABEL"
+            }
+        },
+        "labelSpecification": {
+            "labelStockType": "PAPER_85X11_TOP_HALF_LABEL",
+            "imageType": "PDF"
+        },
+        "requestedPackageLineItems": [
+            {
+                "weight": {
+                    "units": "LB",
+                    "value": 1
+                }
+            }
+        ]
+    },
+    "labelResponseOptions": "URL_ONLY",
+    "accountNumber": {"value": "740561073"}
+}

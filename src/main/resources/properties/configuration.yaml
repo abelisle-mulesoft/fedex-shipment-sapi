@@ -1,0 +1,28 @@
+env:
+  name: "develop"
+
+http_listener:
+  http:
+    host: "0.0.0.0"
+    port: "8081"
+  https:
+    host: "0.0.0.0"
+    port: "8082"
+  read_timeout: "10000"
+
+fedex:
+  https:
+    host: "apis-sandbox.fedex.com"
+    port: "443"
+  api_authorization:
+    path: "/oauth/token"
+  authorization:
+    grant_type: "client_credentials"
+    client_id: <Your FedEx client id>
+    client_secret: <Your FedEx client secret>
+  ship_api:
+    path: "/ship/v1/shipments"
+  response_timeout: "10000"
+
+api:
+  response_timeout: "10000"

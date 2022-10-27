@@ -1,0 +1,18 @@
+#%RAML 1.0
+title: FedEx Shipment System API
+description: System API that encapsulates/abstracts the FedEx API Authorization and Ship API.
+mediaType:
+  - application/json
+/shipment:
+  post:
+    displayName: Create shipment
+    description: Create a new FedEx shipment.
+    body:
+      type: object
+      example: !include fedex-shipment-sapi-request-example.json
+    responses:
+      "201":
+        description: The FedEx shipment was created successfully
+        body:
+          type: object
+          example: !include fedex-shipment-sapi-response-example.json
