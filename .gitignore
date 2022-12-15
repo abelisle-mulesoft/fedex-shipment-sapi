@@ -72,3 +72,4 @@ buildNumber.properties
 # **/configuration.properties - including them as I removed credentials
 # application*.properties - including them as I removed credentials
 **/*.jks
+**/*.orig
