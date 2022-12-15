@@ -68,8 +68,5 @@ buildNumber.properties
 .idea/
 .mule/
 **/.DS_Store
-# **/configuration.yaml - including them as I removed credentials
-# **/configuration.properties - including them as I removed credentials
-# application*.properties - including them as I removed credentials
 **/*.jks
 **/*.orig
